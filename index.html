@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>张本智和比赛记录汇总</title>
+    <style>
+        .header {
+            position: fixed;
+            left: 380px;    /* 导航栏320 + 左右边距20x2 + 间隔20 */
+            right: 20px;    /* 距离右侧20px */
+            top: 20px;      /* 与导航栏顶部对齐 */
+            height: 200px;
+            background: #e0ffff; /* 同导航栏底色 */
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            font-weight: bold;
+            /*color: #333;*/
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 添加柔和阴影 */
+            flex-direction: column;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 32px;
+            color: #2F4F4F;
+            margin-bottom: 15px;
+        }
+
+        /* 搜索框容器 */
+        .search-container {
+            width: 60%;
+            max-width: 600px;
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        /* 搜索输入框 */
+        .search-input {
+            flex: 1;
+            height: 40px;
+            border: 2px solid #5F9EA0;
+            border-top-right-radius: 25px;
+            border-bottom-right-radius: 25px;
+            padding: 0 20px;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-left: -10px;
+            color: #2F4F4F;
+        }
+
+        .search-filter{
+            width: 100px;
+            height: 44px;
+            border: 2px solid #5F9EA0;
+            border-right: 0px;
+            border-top-left-radius: 25px;
+            border-bottom-left-radius: 25px;
+            padding: 0;
+            font-size: 16px;
+            text-align: center;
+            color: #2F4F4F;
+
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(95,158,160,0.3);
+        }
+
+        /* 搜索按钮 */
+        .search-btn {
+            width: 100px;
+            border: none;
+            border-radius: 25px;
+            background: #5F9EA0;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-btn:hover {
+            background: #4D7E80;
+            transform: translateY(-1px);
+        }
+
+        .pingpong-icon {
+            font-size: 30px ;
+            text-align: center;
+            transform: scaleX(-1);
+            background-size: contain;
+
+        }
+
+        .content-area {
+            position: fixed;
+            left: 380px;    /* 与header同宽 */
+            right: 20px;
+            top: 240px;     /* header高度200 + 顶部20 + 间隔20 */
+            bottom: 20px;   /* 与sidebar底部对齐 */
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.15);
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: auto; /* 允许内容滚动 */
+            z-index: 0;     /* 确保在导航栏下方 */
+
+        }
+
+        .banner{
+            height: 40px;
+            flex: 1;
+            margin: 5px;
+            background: #e0ffff;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(95,158,160,0.3);
+            flex-direction: column;
+            justify-content: center;
+            display: flex;
+            position: relative; /* 新增 */
+            padding-right: 100px; /* 为图标留出空间 */
+        }
+
+        .banner span {
+            color: #2F4F4F;
+            font-size: 18px;
+            margin-left: 20px;
+        }
+
+        .content {
+            height: calc(100% - 70px); /* 新增 */
+            margin: 20px 0;           /* 新增 */
+            /*margin-top: 30px;*/
+            background: #e0ffff;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(95,158,160,0.3);
+            margin-left : 50px;
+            margin-right: 50px;
+            flex: 1;             /* 新增 */
+            box-sizing: border-box;  /* 新增 */
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            color: #2F4F4F;
+            position: relative;
+            overflow: auto;
+        }
+
+        .content p {
+            margin-top: 5px;
+        }
+
+        /* 新增导航按钮容器样式 */
+        .nav-buttons {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 12px;
+        }
+
+        /* 导航按钮通用样式 */
+        .nav-button {
+            width: 30px;
+            height: 30px;
+            border-radius: 30%;
+            background: #5F9EA0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow:
+                0 3px 6px rgba(0,0,0,0.16),
+                inset 0 -2px 0 rgba(0,0,0,0.1);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+        }
+
+        /* 悬停效果 */
+        .nav-button:hover {
+            background: #4D7E80;
+            transform: translateY(-1px);
+            box-shadow:
+                0 5px 10px rgba(0,0,0,0.2),
+                inset 0 -2px 0 rgba(0,0,0,0.15);
+        }
+
+        /* 点击效果 */
+        .nav-button:active {
+            transform: translateY(1px);
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.1),
+                inset 0 2px 0 rgba(255,255,255,0.1);
+        }
+
+        /* 留言板容器样式 */
+        .message-board {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(145deg, #c8ffff, #a0e0e0);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(95,158,160,0.2);
+            width: 80%;
+
+        }
+
+        /* 输入框样式 */
+        #messageInput {
+            width: 95%;
+            padding: 12px;
+            border: 2px solid #5F9EA0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-family: 'Noto Sans SC';
+            resize: vertical;
+            transition: all 0.3s;
+            /*align-items: center;*/
+        }
+
+        #messageInput:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(95,158,160,0.3);
+        }
+
+        /* 提交按钮样式 */
+        #submitBtn {
+            background: #5F9EA0;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            float: right;
+        }
+
+        #submitBtn:hover {
+            background: #4D7E80;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+        }
+
+        /* 留言样式 */
+        .message-bubble {
+            position: absolute;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.5s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
+        }
+
+        .message-bubble:hover {
+            transform: scale(1.05) rotate(-2deg);
+            z-index: 1;
+            box-shadow: 3px 3px 15px rgba(0,0,0,0.2);
+        }
+
+        /* 导航栏容器 */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 20px;       /* 顶部留白 */
+            bottom: 20px;    /* 底部留白 */
+            width: 320px;
+            background: #e0ffff;
+            border-radius: 15px;  /* 圆角半径 */
+            margin: 0 20px;  /* 左右留白 */
+            padding: 15px;   /* 内边距 */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;       /* 子元素间距 */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* 通用内容区块样式 */
+        .menu-item {
+            background: rgba(255, 255, 255, 0.5);  /* 半透明白色 */
+            border-radius: 10px;  /* 稍小的圆角 */
+            padding: 15px;       /* 内边距 */
+            flex: 1;             /* 自动填充剩余空间 */
+            min-height: 100px;   /* 最小高度 */
+            
+            /* 安全间距 */
+            margin: 10px;
+            box-sizing: border-box;
+            
+            /* 弹性布局用于内部内容 */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* 上部区块 */
+        .top-item {
+            margin-top: 0;  /* 顶部取消外边距 */
+        }
+
+        /* 下部区块 */
+        .bottom-item {
+            margin-bottom: 0;  /* 底部取消外边距 */
+        }
+
+        .top-item div {
+            color: #2F4F4F;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            padding-left: 40px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+
+
+
+        /* 修改原导航栏样式 */
+        .sidebar {
+            position: fixed;
+            left: 20px;     /* 增加左侧定位 */
+            top: 20px;
+            bottom: 20px;
+            width: 320px;
+            /* 其他原有样式保持不变... */
+            z-index: 1;    /* 确保导航栏在标题栏上方 */
+        }
+
+
+
+        /* 图标特效 */
+        .menu-item div::before {
+        
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+
+        .menu-item {
+            overflow: auto;
+        }
+
+        .top-item div:nth-child(1)::before { content: "🏆"; } /* 生涯成就 */
+        .top-item div:nth-child(2)::before { content: "📈"; } /* 技术分析 */
+        .top-item div:nth-child(3)::before { content: "👤"; } /* 关于选手 */
+        .top-item div:nth-child(4)::before { content: "🌏"; } /* 语言设置 */
+
+        /* 悬停效果 */
+        .top-item div:hover {
+            color: #5F9EA0; /* 主题色 */
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.7) !important;
+            box-shadow: 3px 3px 12px rgba(95, 158, 160, 0.2);
+        }
+
+        .menu-item div:hover::before {
+            transform: scale(1.2) rotate(-15deg); /* 图标动画 */
+        }
+
+        /* 点击效果 */
+        .menu-item div:active {
+            /*transform: translateX(10px) scale(0.96);*/
+        }
+
+        /* 多级菜单样式 */
+            .nav-item {
+            background: rgba(255,255,255,0.3);
+            border-radius: 6px;
+            margin: 5px 0;
+            padding: 10px 15px !important; /* 强制统一内边距 */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block; /* 改为块级元素 */
+            text-align: left; /* 强制左对齐 */
+            white-space: normal; /* 允许换行 */
+            word-wrap: break-word; /* 长单词换行 */
+        }
+
+
+        /* 箭头位置修正 */
+        .nav-arrow {
+            left: 20px;
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 更平滑的缓动曲线 */
+            transform-origin: center; /* 确保旋转中心正确 */
+        }
+
+        /* 确保文字不覆盖箭头 */
+        .nav-item > span:first-child {
+            margin-right: 8px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.7);
+            transform: translateX(5px);
+        }
+
+
+
+        .nav-child {
+            margin-left: 10px;
+            display: none;
+        }
+
+        .nav-child.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; max-height: 0; }
+            to { opacity: 1; max-height: 1000px; }
+        }
+
+        /* 不同层级颜色 */
+        .nav-item.level-0 { color: #2F4F4F; font-weight: 600; }
+        .nav-item.level-1 { color: #4682B4; }
+        .nav-item.level-2 { color: #5F9EA0; }
+        .nav-item.level-3 { color: #6CA6CD; }
+
+
+
+        .nav-item.level-3::before {
+            content: "•";  /* 修改最后层级的指示符 */
+            color: #5F9EA0;
+            margin-right: 8px;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .match-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #5F9EA0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .match-round {
+            color: #2F4F4F;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .match-result {
+            background: #5F9EA0;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+
+        .match-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-label {
+            color: #5F9EA0;
+            font-weight: 500;
+            min-width: 60px;
+        }
+
+        .detail-value {
+            color: #2F4F4F;
+            flex: 1;
+        }
+
+        .no-matches {
+            color: #5F9EA0;
+            font-size: 18px;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .banner a {
+            color: #2F4F4F !important;
+            text-decoration: none !important;
+            font-size: 18px;
+            /*padding: 2px 5px;*/
+            border-radius: 4px;
+            /*transition: all 0.3s;*/
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .banner a:hover {
+            background: rgba(95,158,160,0.1);
+            color: #5F9EA0 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(95,158,160,0.15)
+        }
+
+        .year-list .nav-item,
+        .match-list .nav-item {
+            transition: all 0.3s ease;
+        }
+
+        .year-list .nav-item:hover,
+        .match-list .nav-item:hover {
+            transform: translateX(5px);
+            background: rgba(95,158,160,0.2) !important;
+        }
+
+        .match-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-highlight {
+            background-color: #ffeb3b;
+            padding: 0 2px;
+            border-radius: 3px;
+        }
+
+        .match-card {
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .match-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(95,158,160,0.2);
+        }
+
+        .player-highlight {
+            background-color: #ffeb3b;
+            font-weight: bold;
+        }
+
+        /* 项目卡通用样式 */
+        .content .nav-item.level-1,
+        .content .nav-item.level-2,
+        .content .nav-item.level-3 {
+            width: 160px !important;
+            height: 160px !important;
+            border-radius: 20px !important;
+            background: white !important;
+            margin: 15px !important;
+            padding: 20px !important;
+            display: flex !important;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(95,158,160,0.15) !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            border: 2px solid #5F9EA0;
+        }
+
+        /* 文字样式 */
+        .content .nav-item.level-1 span,
+        .content .nav-item.level-2 span,
+        .content .nav-item.level-3 span {
+            font-size: 16px;
+            color: #2F4F4F !important;
+            font-weight: normal !important;
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        /* 副标题样式 */
+        .content .nav-item.level-1 span:nth-child(2),
+        .content .nav-item.level-2 span:nth-child(2) {
+            font-size: 13px;
+            color: #5F9EA0 !important;
+            margin-top: 12px;
+        }
+
+        /* 卡片容器排列方式 */
+        .year-list,
+        .match-list {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 20px !important;
+            padding: 20px 0 !important;
+            justify-content: flex-start !important;
+        }
+
+        /* 悬停效果 */
+        .content .nav-item.level-1:hover,
+        .content .nav-item.level-2:hover,
+        .content .nav-item.level-3:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(95,158,160,0.25) !important;
+        }
+
+        .time {
+            display: flex;
+            gap:8px;
+            margin-top: 10px;
+            color: #5F9EA0;
+            font-size: 14px;
+            margin-right: 400px;
+        }
+
+        .search-container {
+    position: relative; /* 为提示框定位提供基准 */
+}
+
+.search-alert {
+    position: absolute;
+    bottom: -40px;
+    left: 120px; /* 对齐搜索输入框 */
+    background: #fff;
+    color: #CD5C5C;
+    font-size: 14px;
+    padding: 8px 15px;
+    border-radius: 4px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    border: 1px solid #ffcccc;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none; /* 防止干扰点击操作 */
+    z-index: 999;
+}
+
+.search-alert::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 20px;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-left: 1px solid #ffcccc;
+    border-top: 1px solid #ffcccc;
+    transform: rotate(45deg);
+}
+
+.search-alert.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+    </style>
+
+
+    <script type="text/javascript">
+        
+        let data = null;
+        let originalContent = null;
+        let currentSearchKeyword = null;
+
+
+        
+
+
+        // let currentPath = ['当前页:首页'];
+        function createMenu(parentElement, data, level = 0) {
+            Object.entries(data).forEach(([key, value]) => {
+                const item = document.createElement('div');
+                item.className = `nav-item level-${level}`;
+                item.textContent = key;
+                item.style.paddingLeft = `${30 + level * 20}px`;
+
+                const arrow = document.createElement('span');
+                arrow.className = 'nav-arrow';
+                arrow.textContent = '▶';
+                item.prepend(arrow);
+
+                const childContainer = document.createElement('div');
+                childContainer.className = 'nav-child';
+
+                parentElement.appendChild(item);
+                parentElement.appendChild(childContainer);
+
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isActive = !childContainer.classList.contains('show');
+
+                    if(level === 0) { // 只处理一级菜单
+                        const contentDiv = document.querySelector('.content');
+                        if(!originalContent) { // 首次保存原始内容
+                            originalContent = contentDiv.innerHTML; 
+                        }
+                        
+                        if(isActive) { // 展开时清空内容
+                            contentDiv.innerHTML = '';
+                        } else { // 收回时恢复内容
+                            contentDiv.innerHTML = originalContent;
+                            // 重新绑定留言板事件
+                            loadHomeContent();
+                            // document.getElementById('submitBtn').onclick = submitMessage;
+                            // document.getElementById('messageInput').onkeydown = function(e) {
+                            //     if (e.key === 'Enter' && !e.shiftKey) {
+                            //         e.preventDefault();
+                            //         submitMessage();
+                            //     }
+                            // };
+                        }
+                    }
+                    
+                    // 更新路径逻辑
+                    if (isActive) {
+                        currentPath = currentPath.slice(0, level + 1); // +1保留"当前页:首页"
+                        currentPath[level + 1] = key;
+                    } else {
+                        // 收回时移除当前层级
+                        if (level === 2) { // 比赛名称是第三级
+                            setTimeout(() => loadContentByPath(), 0);
+                        }
+                        currentPath = currentPath.slice(0, level + 1);
+                    }
+                    syncMenuState(level + (isActive ? 1 : 0));
+                    updateBreadcrumb();
+                    loadContentByPath();
+
+                    const closeChildren = (container) => {
+                        Array.from(container.children).forEach(el => {
+                            if (el.classList.contains('nav-item')) {
+                                const childContainer = el.nextElementSibling;
+                                if (childContainer?.classList.contains('nav-child')) {
+                                    childContainer.classList.remove('show');
+                                    el.querySelector('.nav-arrow').style.transform = 'none';
+                                    closeChildren(childContainer); // 递归关闭深层子菜单
+                                }
+                            }
+                        });
+                    };
+
+                    // 关闭同级菜单
+                    Array.from(parentElement.children)
+                        .filter(el => el !== item && el !== childContainer)
+                        .forEach(el => {
+                            el.classList.remove('active');
+                            const siblingChildContainer = el.nextElementSibling;
+                            if (siblingChildContainer) {
+                                siblingChildContainer.classList.remove('show');
+                                closeChildren(siblingChildContainer); // 关键新增：递归关闭子菜单
+                            }
+                            const arrowElement = el.querySelector('.nav-arrow');
+                            if (arrowElement) arrowElement.style.transform = 'none';
+                        });
+                    if (!isActive) {
+                        closeChildren(childContainer);
+                    }
+
+                    arrow.style.webkitTransform = isActive ? 'rotate(90deg)' : 'none';
+                    arrow.style.transform = isActive ? 'rotate(90deg)' : 'none';
+                    childContainer.classList.toggle('show', isActive);
+                });
+
+                if (typeof value === 'object') {
+                    if (Array.isArray(value)) {
+                        value.forEach(event => {
+                            Object.entries(event).forEach(([eventType, eventData]) => {
+                                if(eventType === '比赛名称') {
+                                    Object.entries(eventData).forEach(([matchName, matchDetails]) => {
+                                        const matchItem = createMenuItem(matchName, level + 1);
+                                        const propContainer = document.createElement('div');
+                                        propContainer.className = 'nav-child';
+
+                                        // 处理性质数据
+                                        if(matchDetails.性质) {
+                                            matchDetails.性质.forEach(propObj => {
+                                                Object.entries(propObj).forEach(([propKey]) => {
+                                                    const propItem = createMenuItem(propKey, level + 2, true);
+                                                    
+                                                    // 性质项点击处理
+                                                    propItem.addEventListener('click', (e) => {
+                                                        e.stopPropagation();
+
+                                                        currentPath = [
+                                                            '当前页:首页',
+                                                            currentPath[1],  // 类别
+                                                            currentPath[2],  // 年份
+                                                            currentPath[3],  // 比赛名称
+                                                            propKey          // 性质
+                                                        ];
+                                                        // currentPath = currentPath.slice(0, 3); // 保留到比赛名称层级
+                                                        // currentPath[3] = propKey; // 直接替换性质位置
+                                                        const category = currentPath[1];
+                                                        const year = String(currentPath[2]);      // 年份
+                                                        const matchName = currentPath[3]; // 比赛名称
+                                                        const property = propKey;         // u15/u18
+                                                        console.log(data);
+                                                        console.log(currentPath);
+
+                                                        // 从数据中获取比赛详情
+                                                        // const matches = data[year]
+                                                        //     .find(item => item.比赛名称[matchName])
+                                                        //     ?.比赛名称[matchName].性质
+                                                        //     .find(p => p[property])?.[property];
+
+                                                        // // 清空内容区域
+                                                        // const contentDiv = document.querySelector('.content');
+                                                        // contentDiv.innerHTML = '';
+
+                                                        // // 创建标题
+                                                        // const title = document.createElement('h2');
+                                                        // title.style.color = '#2F4F4F';
+                                                        // title.style.marginBottom = '30px';
+                                                        // title.textContent = `${matchName} - ${property.toUpperCase()} 比赛详情`;
+                                                        // contentDiv.appendChild(title);
+
+                                                        // if (matches && matches.length > 0) {
+                                                        //     matches.forEach(match => {
+                                                        //         // 创建比赛卡片
+                                                        //         const card = document.createElement('div');
+                                                        //         card.className = 'match-card';
+
+                                                        //         // 卡片头部（轮次 + 结果）
+                                                        //         const header = document.createElement('div');
+                                                        //         header.className = 'match-header';
+                                                                
+                                                        //         const round = document.createElement('span');
+                                                        //         round.className = 'match-round';
+                                                        //         round.textContent = match.轮次;
+                                                                
+                                                        //         const result = document.createElement('span');
+                                                        //         result.className = 'match-result';
+                                                        //         result.textContent = match.结果;
+                                                        //         result.style.backgroundColor = match.结果 === '胜' ? '#5F9EA0' : '#CD5C5C';
+
+                                                        //         header.appendChild(round);
+                                                        //         header.appendChild(result);
+
+                                                        //         // 比赛详情
+                                                        //         const details = document.createElement('div');
+                                                        //         details.className = 'match-details';
+
+                                                        //         const createDetailItem = (label, value) => {
+                                                        //             const container = document.createElement('div');
+                                                        //             container.className = 'detail-item';
+                                                                    
+                                                        //             const labelSpan = document.createElement('span');
+                                                        //             labelSpan.className = 'detail-label';
+                                                        //             labelSpan.textContent = label;
+                                                                    
+                                                        //             const valueSpan = document.createElement('span');
+                                                        //             valueSpan.className = 'detail-value';
+                                                        //             valueSpan.textContent = value;
+
+                                                        //             container.appendChild(labelSpan);
+                                                        //             container.appendChild(valueSpan);
+                                                        //             return container;
+                                                        //         }
+
+                                                        //         details.appendChild(createDetailItem('对手', match.对手));
+                                                        //         details.appendChild(createDetailItem('比分', match.比分));
+                                                        //         details.appendChild(createDetailItem('轮次', match.轮次));
+                                                        //         details.appendChild(createDetailItem('结果', match.结果));
+
+                                                        //         // 组合元素
+                                                        //         card.appendChild(header);
+                                                        //         card.appendChild(details);
+                                                        //         contentDiv.appendChild(card);
+                                                        //     });
+                                                        // } else {
+                                                        //     const empty = document.createElement('div');
+                                                        //     empty.className = 'no-matches';
+                                                        //     empty.textContent = '暂无该级别的比赛数据';
+                                                        //     contentDiv.appendChild(empty);
+                                                        // }
+                                                        loadMatchDetails(category,year,matchName,property)
+
+                                                        // 更新路径
+                                                        // currentPath = [
+                                                        //     '当前页:首页',
+                                                        //     category,
+                                                        //     year,
+                                                        //     matchName,
+                                                        //     property
+                                                        // ];
+
+
+                                                        // updateBreadcrumb();
+                                                    });
+
+
+                                                    
+                                                    propContainer.appendChild(propItem);
+                                                });
+                                            });
+                                        }
+
+                                        const matchArrow = matchItem.querySelector('.nav-arrow');
+                                        matchItem.addEventListener('click', (e) => {
+                                            e.stopPropagation();
+                                            const isPropActive = propContainer.classList.toggle('show');
+                                            const year = key;  // 从外层作用域捕获年份
+    
+                                            if (isPropActive) {
+                                    currentPath = currentPath.slice(0, 3);
+                                    currentPath[3] = matchName;
+                                } else {
+                                    currentPath = currentPath.slice(0, 3);
+                                }
+                                            
+                                            // 关闭其他同级比赛菜单
+                                            Array.from(childContainer.children)
+                                                .filter(el => el !== matchItem)
+                                                .forEach(el => {
+                                                    el.nextElementSibling?.classList.remove('show');
+                                                    // el.querySelector('.nav-arrow')?.style.transform = 'none';
+                                                    const arrowElement = el.querySelector('.nav-arrow');
+                                                    if (arrowElement) arrowElement.style.transform = 'none';
+                                                });
+
+                                            // 更新路径到比赛层级
+                                            // currentPath = currentPath.slice(0, 2);
+                                            // currentPath[2] = matchName;
+
+                                            syncMenuState(isPropActive ? 3 : 2);
+                                            updateBreadcrumb();
+                                            loadContentByPath();
+
+                                            matchArrow.style.transform = isPropActive ? 'rotate(90deg)' : 'none';
+                                        });
+
+                                        childContainer.appendChild(matchItem);
+                                        childContainer.appendChild(propContainer);
+                                    });
+                                }
+                            });
+                        });
+                    } else {
+                        createMenu(childContainer, value, level + 1);
+                    }
+                }
+            });
+        }
+
+        function updateBreadcrumb() {
+            const bannerSpan = document.querySelector('.banner span');
+            if (currentSearchKeyword) {
+                bannerSpan.innerHTML = `
+                    <b>当前页:</b> 
+                    <b><a href="javascript:void(0)" onclick="clearSearch()">搜索：${currentSearchKeyword}</a></b>
+                `;
+                return;
+            }
+            // 处理路径：保留所有元素，仅替换前缀
+            const validPath = currentPath.map(p => p.replace('当前页:', ''));
+        
+            // 生成面包屑导航
+            const breadcrumbHtml = validPath.map((item, index) => {
+                const displayText = item || '首页'; // 空值处理
+                return `<b><a href="javascript:void(0)"
+                          onclick="handleBreadcrumbClick(${index})"
+                          style="${index === 0 ? 'font-weight:bold' : ''}">
+                          ${displayText}
+                        </a></b>`;
+            }).join('<b> > </b>');
+        
+            bannerSpan.innerHTML = `<b>当前页:</b> ${breadcrumbHtml}`; // 固定前缀
+        }
+        
+        function clearSearch() {
+            currentSearchKeyword = null;
+            document.querySelector('.search-input').value = '';
+            currentPath = ['当前页:首页']; // 强制重置路径
+            syncMenuState(0);
+            loadHomeContent();
+            updateBreadcrumb();
+        }
+
+        function handleBreadcrumbClick(clickIndex) {
+            // 计算需要保留的层级（+1处理首页偏移）
+            const targetLevel = clickIndex;
+            currentPath = currentPath.slice(0, targetLevel + 1);
+
+            // 同步左侧菜单状态
+            syncMenuState(targetLevel);
+            updateBreadcrumb();
+            loadContentByPath();
+        }
+
+        function syncMenuState(targetLevel) {
+            currentSearchKeyword = null;
+            const menuContainer = document.getElementById('navTreeContainer');
+
+            // 递归关闭所有超过当前层级的菜单
+            const closeExcessLevels = (container, currentLevel) => {
+                Array.from(container.children).forEach(el => {
+                    if(el.classList.contains('nav-item')) {
+                        const childContainer = el.nextElementSibling;
+                        if(childContainer?.classList.contains('nav-child')) {
+                            if(currentLevel >= targetLevel) {
+                                childContainer.classList.remove('show');
+                                el.querySelector('.nav-arrow').style.transform = 'none';
+                            }
+                            closeExcessLevels(childContainer, currentLevel + 1);
+                        }
+                    }
+                });
+            };
+            closeExcessLevels(menuContainer, 0);
+
+            // 递归展开需要显示的层级
+            const openTargetLevels = (container, currentLevel) => {
+        if (!container) return; // 新增空值检查
+        
+        Array.from(container.children).forEach(el => {
+            if(el.classList.contains('nav-item')) {
+                const childContainer = el.nextElementSibling;
+                
+                // 新增防御性编程
+                if (!childContainer || !childContainer.classList) {
+                    console.warn('无效的子容器:', el.textContent);
+                    return;
+                }
+
+                const itemText = el.textContent.replace('▶','').trim();
+                
+                if (currentLevel < targetLevel && 
+                   currentPath[currentLevel + 1] === itemText) {
+                    childContainer.classList.add('show');
+                    const arrow = el.querySelector('.nav-arrow');
+                    if (arrow) arrow.style.transform = 'rotate(90deg)';
+                    openTargetLevels(childContainer, currentLevel + 1);
+                }
+            }
+        });
+    };
+            openTargetLevels(menuContainer, 0);
+        }
+
+
+        function loadContentByPath() {
+    const contentDiv = document.querySelector('.content');
+    const validPath = currentPath.map(p => p.replace('当前页:', '')); // 直接处理前缀
+    const actualDepth = validPath.length;
+
+    contentDiv.innerHTML = '';
+    switch (actualDepth) {
+        case 1: loadHomeContent(); break;
+        case 2: loadCategoryContent(validPath[1]); break;
+        case 3: loadYearContent(validPath[1], validPath[2]); break;
+        case 4: loadMatchContent(validPath[1], validPath[2], validPath[3]); break;
+        case 5: loadMatchDetails(validPath[1], validPath[2], validPath[3], validPath[4]); break;
+        default: loadHomeContent();
+    }
+}
+
+        function loadHomeContent() {
+            const contentDiv = document.querySelector('.content');
+            contentDiv.innerHTML = `
+                <h1>欢迎使用娜个男人系统v1</h1>
+                <p><b>① 可在左侧的功能栏里查看赛事记录</b></p>
+                <p><b>② 任何bug可在微博中联系我或在下方留言</b></p>
+                <div class="message-board">
+                    <textarea id="messageInput" placeholder="留下你的建议或祝福..."></textarea>
+                    <button id="submitBtn" onclick="submitMessage()">发送留言 ✈️</button>
+                </div>
+            `;
+            // 重新绑定留言板事件
+            contentDiv.addEventListener('click', (e) => {
+                if (e.target && e.target.id === 'submitBtn') {
+                    submitMessage();
+                }
+            });
+        
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.onkeydown = function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        submitMessage();
+                    }
+                };
+            }
+            // document.getElementById('submitBtn').onclick = submitMessage;
+            // contentDiv.addEventListener('click', (e) => {
+            //     if (e.target && e.target.id === 'submitBtn') {
+            //         submitMessage();
+            //     }
+            // });
+            // document.getElementById('messageInput').onkeydown = function(e) {
+            //     if (e.key === 'Enter' && !e.shiftKey) {
+            //         e.preventDefault();
+            //         submitMessage();
+            //     }
+            // };
+            currentSearchKeyword = null;
+        }
+
+        function loadCategoryContent(category) {
+            const years = Object.keys(data[category]);
+            const contentDiv = document.querySelector('.content');
+
+            contentDiv.innerHTML = `
+                <h2 style="color: #2F4F4F; margin-bottom: 20px;">${category}</h2>
+                <div class="year-list" style="padding: 20px;">
+                    ${years.map(year => {
+                        const matchCount = data[category][year].length; // 获取该年份比赛数量
+                        return `
+                            <div class="nav-item level-1"
+                                 style="margin: 10px; padding: 15px;
+                                        background: rgba(95,158,160,0.1);
+                                        border-radius: 8px;
+                                        cursor: pointer;"
+                                 onclick="handlePathNavigation('${category}', '${year}')">
+                                ${year}
+                                <span style="font-size:14px;color:#5F9EA0;margin-left:10px;">
+                                    共包含 ${matchCount} 个赛事
+                                </span>
+                            </div>
+                        `}).join('')}
+                </div>
+            `;
+        }
+
+        function loadYearContent(category, year) {
+            const matches = data[category][year];
+            const contentDiv = document.querySelector('.content');
+
+            contentDiv.innerHTML = `
+                <h2 style="color: #2F4F4F; margin-bottom: 20px;">${category} - ${year}</h2>
+                <div class="match-list" style="padding: 20px;">
+                    ${matches.map(match => {
+                        const matchName = Object.keys(match.比赛名称)[0];
+                        const propertyCount = Object.keys(match.比赛名称[matchName].性质).length; // 获取性质数量
+                        return `
+                            <div class="nav-item level-2"
+                                 style="margin: 10px; padding: 15px;
+                                        background: rgba(95,158,160,0.1);
+                                        border-radius: 8px;
+                                        cursor: pointer;"
+                                 onclick="handlePathNavigation('${category}', '${year}', '${matchName}')">
+                                ${matchName}
+                                <span style="font-size:14px;color:#5F9EA0;margin-left:10px;">
+                                    共包含 ${propertyCount} 个项目
+                                </span>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function loadMatchContent(category, year, matchName) {
+            const contentDiv = document.querySelector('.content');
+            contentDiv.innerHTML = '';
+
+            // 获取比赛数据
+            const matchData = data[category][year].find(
+                item => item.比赛名称?.[matchName]
+            )?.比赛名称[matchName].性质;
+
+
+
+            // 创建标题
+            const title = document.createElement('h2');
+            title.style.cssText = 'color: #2F4F4F; margin-bottom: 20px;';
+            title.innerHTML = `
+                 ${matchName}
+            `;
+            contentDiv.appendChild(title);
+
+            if (!matchData || matchData.length === 0) {
+                contentDiv.innerHTML += '<div class="no-matches">暂无赛事数据</div>';
+                return;
+            }
+
+            
+
+            // 创建容器
+            const container = document.createElement('div');
+            container.className = 'match-list';
+            container.style.padding = '20px';
+
+            matchData.forEach(property => {
+                Object.entries(property).forEach(([propName, matches]) => {
+                    // 统计胜负
+                    const winCount = matches.filter(m => m.结果 === '胜').length;
+                    const loseCount = matches.length - winCount;
+
+                    // 创建项目卡片
+                    const card = document.createElement('div');
+                    card.className = 'nav-item level-2';
+                    card.style.cssText = `
+                        margin: 10px;
+                        padding: 15px;
+                        background: rgba(95,158,160,0.1);
+                        border-radius: 8px;
+                        cursor: pointer;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    `;
+                    card.addEventListener('click', () => {
+                        loadMatchDetails(category, year, matchName, propName);
+                    });
+
+                    // 左侧信息
+                    const leftSection = document.createElement('div');
+                    leftSection.innerHTML = `
+                        <span style="font-size:16px;color:#2F4F4F">
+                            ${propName.toUpperCase()}
+                        </span>
+                    `;
+
+                    // 右侧统计
+                    const rightSection = document.createElement('div');
+                    rightSection.innerHTML = `
+                        <span style="font-size:14px;color:#5F9EA0">
+                            ${winCount}胜${loseCount}负
+                        </span>
+                    `;
+
+                    // 点击查看详情
+                    card.addEventListener('click', () => {
+                        currentPath = [
+                            '当前页:首页',  // 层级0
+                            category,       // 层级1
+                            year,           // 层级2
+                            matchName,      // 层级3
+                            propName        // 层级4（新增第五层）
+                        ];
+                        syncMenuState(4);
+                        updateBreadcrumb();
+                        loadContentByPath();
+
+                    });
+
+                    card.appendChild(leftSection);
+                    card.appendChild(rightSection);
+                    container.appendChild(card);
+                });
+            });
+
+            contentDiv.appendChild(container);
+        }
+
+        function loadMatchDetails(category, year, matchName, property) {
+            const contentDiv = document.querySelector('.content');
+            contentDiv.innerHTML = '';
+
+            // 从数据中获取比赛详情
+            const matches = data[category][year]
+                .find(item => item.比赛名称[matchName])
+                ?.比赛名称[matchName].性质
+                .find(p => p[property])?.[property];
+
+            // 创建标题
+            const title = document.createElement('h2');
+            title.style.color = '#2F4F4F';
+            title.style.marginBottom = '30px';
+            title.innerHTML = `
+                 ${matchName} - ${property.toUpperCase()}
+            `;
+            contentDiv.appendChild(title);
+            const timeContainer = document.createElement('div');
+            timeContainer.className = 'time'
+            const infoSet = {
+                搭档: new Set(),
+                头衔: new Set(),
+                团体: new Set()
+            };
+            const iconMap = {
+                '头衔': '🎖️',  // 奖章图标
+                '搭档': '🤝'  // 握手图标
+            };
+
+            const isSpecialLeague = ['T联赛','欧洲乒乓球冠军联赛','T2亚太乒乓球联赛'].includes(category);
+
+            matches?.forEach(match => {
+                if(match.搭档) infoSet.搭档.add(match.搭档);
+                if(match.头衔 && !isSpecialLeague) infoSet.头衔.add(match.头衔);
+                // if(match.团体) infoSet.团体.add(match.团体);
+            });
+            const infoElements = [];
+
+
+
+            // 获取比赛时间（示例数据中时间字段在比赛对象外层）
+            const matchData = data[category][year].find(
+                item => item.比赛名称?.[matchName]
+            );
+            
+            if(matchData?.时间) {
+                infoElements.push(`
+                    <span class="time-item">
+                        <span class="icon">📅</span>
+                        ${matchData.时间}
+                    </span>
+                `);
+            }
+
+            // 添加其他信息
+            Object.entries(infoSet).forEach(([key, set]) => {
+                if(isSpecialLeague && key === '头衔') return;
+                if(set.size > 0) {
+                    infoElements.push(`
+                        <span class="info-item">
+                            <span class="label">${iconMap[key]}</span>
+                            <span class="value">${Array.from(set).join('、')}</span>
+                        </span>
+                    `);
+                }
+            });
+
+            timeContainer.innerHTML = infoElements.join('');
+            contentDiv.appendChild(timeContainer);
+
+
+    
+
+            if (matches && matches.length > 0) {
+                matches.forEach(match => {
+                    // 创建比赛卡片
+                    const card = document.createElement('div');
+                    card.className = 'match-card';
+
+                    // 卡片头部（轮次 + 结果）
+                    const header = document.createElement('div');
+                    header.className = 'match-header';
+                    
+                    // if(match.头衔) {
+                    //     const titleBadge = document.createElement('span');
+                    //     titleBadge.className = 'match-result';
+                    //     titleBadge.textContent = match.头衔;
+                    //     titleBadge.style.backgroundColor = '#8FBC8F'; // 浅绿色
+                    //     header.appendChild(titleBadge);
+                    // }
+
+                    const round = document.createElement('span');
+                    round.className = 'match-round';
+                    round.textContent = match.轮次;
+                    
+                    const result = document.createElement('span');
+                    result.className = 'match-result';
+                    if (isSpecialLeague) {
+                        // 显示头衔和日期
+                        round.textContent = match.头衔 || '无头衔信息';
+                        result.textContent = match.日期 || '无日期信息';
+                        result.style.backgroundColor = match.结果 === '胜' ? '#5F9EA0' : '#CD5C5C'; // 统一颜色
+                        result.style.color = 'white';
+                    } else {
+                        // 默认显示轮次和结果
+                        round.textContent = match.轮次;
+                        result.textContent = match.结果;
+                        result.style.backgroundColor = match.结果 === '胜' ? '#5F9EA0' : '#CD5C5C';
+                    }
+                    // result.textContent = match.结果;
+                    // result.style.backgroundColor = match.结果 === '胜' ? '#5F9EA0' : '#CD5C5C';
+
+                    header.appendChild(round);
+                    header.appendChild(result);
+
+                    // 比赛详情
+                    const details = document.createElement('div');
+                    details.className = 'match-details';
+
+                    const createDetailItem = (label, value) => {
+                        const container = document.createElement('div');
+                        container.className = 'detail-item';
+                        
+                        const labelSpan = document.createElement('span');
+                        labelSpan.className = 'detail-label';
+                        labelSpan.textContent = label;
+                        
+                        const valueSpan = document.createElement('span');
+                        valueSpan.className = 'detail-value';
+                        valueSpan.textContent = value;
+
+                        container.appendChild(labelSpan);
+                        container.appendChild(valueSpan);
+                        return container;
+                    }
+
+                    
+                    details.appendChild(createDetailItem('轮次', match.轮次));
+                    details.appendChild(createDetailItem('结果', match.结果));
+                    // if(match.搭档) {
+                    //     details.appendChild(createDetailItem('搭档', match.搭档));
+                    // }
+                    // if(match.搭档) {
+                    //     details.appendChild(createDetailItem('头衔', match.头衔));
+                    // }
+
+                    details.appendChild(createDetailItem('对手', match.对手));
+                    details.appendChild(createDetailItem('比分', match.比分));
+
+                    // 组合元素
+                    card.appendChild(header);
+                    card.appendChild(details);
+                    contentDiv.appendChild(card);
+                });
+            } else {
+                const empty = document.createElement('div');
+                empty.className = 'no-matches';
+                empty.textContent = '暂无该级别的比赛数据';
+                contentDiv.appendChild(empty);
+            }
+
+            // 同步路径和菜单状态
+            currentPath = ['当前页:首页', category, year, matchName, property];
+            syncMenuState(4);
+            updateBreadcrumb();
+        }
+
+        function handlePathNavigation(...pathSegments) {
+            currentPath = ['当前页:', ...pathSegments];
+            syncMenuState(pathSegments.length);
+            updateBreadcrumb();
+            loadContentByPath();
+        }
+
+
+
+        function createMenuItem(text, level, isFinal = false) {
+            const item = document.createElement('div');
+            item.className = `nav-item level-${level}${isFinal ? ' final-item' : ''}`;
+            item.textContent = text;
+            item.style.paddingLeft = `${30 + level * 20}px`;
+
+            if (!isFinal) {
+                const arrow = document.createElement('span');
+                arrow.className = 'nav-arrow';
+                arrow.textContent = '▶';
+                item.prepend(arrow);
+            }
+            return item;
+        }
+
+        // 初始化菜单
+        async function initMenu() {
+            try {
+                const response = await fetch('data.json');
+                data = await response.json();
+                const navContainer = document.getElementById('navTreeContainer');
+                createMenu(navContainer, data); // 创建菜单树
+                currentPath = ['当前页:首页'];
+                syncMenuState(0);
+                updateBreadcrumb();
+                loadHomeContent();
+            } catch (error) {
+                console.error('数据加载失败:', error);
+                alert('数据加载失败，请检查data.json文件');
+            }
+            
+        }
+
+        function showAlert() {
+            alert("该功能正在开发中，敬请期待！");
+        }
+
+        // document.getElementById('messageInput').addEventListener('keydown', function(e) {
+        //     if (e.key === 'Enter' && !e.shiftKey) {
+        //         e.preventDefault(); // 阻止默认换行行为
+        //         submitMessage();
+        //     }
+        // });
+        document.addEventListener('DOMContentLoaded', function() {
+            // 4. 添加空值检查
+            const input = document.getElementById('messageInput');
+            if (!input) throw new Error("元素未找到");
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    submitMessage();
+                }
+            });
+        });
+
+
+        // 搜索功能实现
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定搜索按钮
+            const searchBtn = document.querySelector('.search-btn');
+            if (searchBtn) {
+                searchBtn.addEventListener('click', performSearch);
+            } else {
+                console.error('搜索按钮元素未找到！');
+            }
+
+            // 绑定输入框回车事件
+            const searchInput = document.querySelector('.search-input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') performSearch();
+                });
+            } else {
+                console.error('搜索输入框元素未找到！');
+            }
+        });
+
+        function performSearch() {
+            const searchType = document.getElementById('searchType').value;
+            const keyword = document.querySelector('.search-input').value.trim();
+            currentSearchKeyword = keyword;
+            const alertEl = document.querySelector('.search-alert');
+
+            // 隐藏之前的提示
+            alertEl.classList.remove('show');
+
+            // 空值校验
+            if (!keyword) {
+                alertEl.textContent = "搜索内容不能为空，请输入关键词";
+                alertEl.classList.add('show');
+                
+                // 2秒后自动隐藏
+                setTimeout(() => {
+                    alertEl.classList.remove('show');
+                }, 2000);
+                
+                // 自动聚焦输入框
+                document.querySelector('.search-input').focus();
+                return;
+            }
+            
+            if (searchType === 'event') {
+                const results = searchMatches(keyword);
+                displaySearchResults(results, 'event');
+            } else if (searchType === 'player') {
+                const results = searchByPlayer(keyword);
+                displaySearchResults(results, 'player');
+            } else if (searchType === 'medal') {
+                const results = searchByMedal(keyword);
+                displaySearchResults(results, 'medal');
+            }
+            updateBreadcrumb();
+        }
+
+        function searchByMedal(keyword) {
+            const normalizedKeyword = keyword.replace(/[牌军]/g, '').trim(); // 统一关键词格式
+            const searchTerms = [];
+            
+            // 建立奖牌映射关系
+            const medalMap = {
+                '冠': ['冠军'],
+                '亚': ['亚军'],
+                '铜': ['铜牌', '季军'],
+                '季': ['铜牌', '季军'],
+                'gold': ['冠军'],       // 支持英文
+                'silver': ['亚军'],
+                'bronze': ['铜牌', '季军']
+            };
+
+            // 处理搜索词
+            if (medalMap[normalizedKeyword]) {
+                searchTerms.push(...medalMap[normalizedKeyword]);
+            } else {
+                // 兼容全称搜索
+                const fullNameMap = {
+                    '金': ['冠军'],
+                    '银': ['亚军'],
+                    '冠军': ['冠军'],
+                    '亚军': ['亚军'],
+                    '铜牌': ['铜牌', '季军'],
+                    '季军': ['铜牌', '季军']
+                };
+                searchTerms.push(...(fullNameMap[keyword] || [keyword]));
+            }
+
+            const results = [];
+            Object.entries(data).forEach(([category, years]) => {
+                Object.entries(years).forEach(([year, matches]) => {
+                    matches.forEach(match => {
+                        const matchName = Object.keys(match.比赛名称)[0];
+                        const matchData = match.比赛名称[matchName];
+                        
+                        matchData.性质?.forEach(propertyObj => {
+                            Object.entries(propertyObj).forEach(([propName, records]) => {
+                                const medalRecords = records.filter(record => {
+                                    // 安全访问头衔字段
+                                    const title = record.头衔?.trim() || '';
+                                    return searchTerms.some(term => 
+                                        title.includes(term)
+                                    );
+                                });
+                                
+                                if (medalRecords.length > 0) {
+                                    // 去重处理
+                                    const existing = results.find(r => 
+                                        r.matchName === matchName && 
+                                        r.property === propName
+                                    );
+                                    if (!existing) {
+                                        results.push({
+                                            category,
+                                            year,
+                                            matchName,
+                                            property: propName,
+                                            medals: [...new Set(medalRecords.map(r => r.头衔))]
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                    });
+                });
+            });
+            return results;
+        }
+
+        
+        function searchMatches(keyword) {
+            const results = [];
+            
+            Object.entries(data).forEach(([category, years]) => {
+                Object.entries(years).forEach(([year, matches]) => {
+                    matches.forEach(match => {
+                        const matchName = Object.keys(match.比赛名称)[0];
+                        if (matchName.includes(keyword)) {
+                            results.push({
+                                category,
+                                year,
+                                matchName,
+                                data: match.比赛名称[matchName]
+                            });
+                        }
+                    });
+                });
+            });
+            
+            return results;
+        }
+
+        function searchByPlayer(keyword) {
+            const results = [];
+            
+            Object.entries(data).forEach(([category, years]) => {
+                Object.entries(years).forEach(([year, matches]) => {
+                    matches.forEach(match => {
+                        const matchName = Object.keys(match.比赛名称)[0];
+                        const matchData = match.比赛名称[matchName];
+                        
+                        matchData.性质.forEach(propertyObj => {
+                            Object.entries(propertyObj).forEach(([propName, records]) => {
+                                records.forEach(record => {
+                                    if (record.对手) {
+                                        if (record.对手.toLowerCase().includes(keyword.toLowerCase())) {
+                                        // 每个匹配记录生成独立条目
+                                            results.push({
+                                                category,
+                                                year,
+                                                matchName,
+                                                property: propName,
+                                                opponent: record.对手,
+                                                score: record.比分,
+                                                result: record.结果
+                                            });
+                                        }
+                                    }
+                                    
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+            
+            return results;
+        }
+
+
+        function displaySearchResults(results, searchType) {
+            const contentDiv = document.querySelector('.content');
+            contentDiv.innerHTML = `<h2 style="color: #2F4F4F; margin-bottom: 20px;">搜索结果（${results.length}条）</h2>`;
+            
+            if (results.length === 0) {
+                contentDiv.innerHTML += '<div class="no-matches">未找到匹配的赛事</div>';
+                return;
+            }
+
+            const container = document.createElement('div');
+            container.className = 'match-list';
+            container.style.padding = '20px';
+            
+
+            if (searchType === 'event') {
+                results.forEach(result => {
+                const card = document.createElement('div');
+                card.className = 'nav-item level-2';
+                card.style.cssText = `
+                    margin: 10px; 
+                    padding: 15px;
+                    background: rgba(95,158,160,0.1);
+                    border-radius: 8px;
+                    cursor: pointer;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                `;
+
+                const properties = result.data.性质 || [];
+                const propertyCount = properties.length;
+
+                card.innerHTML = `
+                    <div>
+                        <span style="color:#2F4F4F">${result.matchName}</span>
+                        <div style="font-size:12px;color:#666;margin-top:5px">
+                            ${result.year} | ${result.category}
+                        </div>
+                    </div>
+                    <span style="font-size:14px;color:#5F9EA0">
+                        包含 ${propertyCount} 个项目
+                    </span>
+                `;
+
+                card.addEventListener('click', () => {
+                    currentPath = [
+                        '当前页:首页',
+                        result.category,
+                        result.year,
+                        result.matchName
+                    ];
+                    syncMenuState(3);
+                    updateBreadcrumb();
+                    loadMatchContent(result.category, result.year, result.matchName);
+                });
+
+                container.appendChild(card);
+            });} else if (searchType === 'player') {
+                // 新增选手展示逻辑
+                results.forEach(result => {
+                    const card = document.createElement('div');
+                    card.className = 'match-card';
+                    card.style.cursor = 'pointer';
+
+                    card.innerHTML = `
+                        <div class="match-header">
+                            <span class="match-round">${result.matchName}</span>
+                            <span class="match-result" style="background:#5F9EA0">
+                                ${result.year} | ${result.category} 
+                            </span>
+                        </div>
+                        <div style="margin-top:15px">
+                            <div style="display:flex;justify-content:space-between;padding:8px 0">
+                                <span>${result.property.toUpperCase()}-${result.opponent}</span>
+                                <span style="color:${result.result === '胜' ? '#5F9EA0' : '#CD5C5C'}">
+                                    ${result.score}（${result.result}）
+                                </span>
+                            </div>
+                        </div>
+                    `;
+
+                    // 点击跳转到详细赛事
+                    card.addEventListener('click', () => {
+                        currentPath = [
+                            '当前页:首页',
+                            result.category,
+                            result.year,
+                            result.matchName,
+                            result.property
+                        ];
+                        syncMenuState(4);
+                        updateBreadcrumb();
+                        loadContentByPath();
+                    });
+
+                    container.appendChild(card);
+                });
+            } else if (searchType === 'medal') {
+                const container = document.createElement('div');
+                container.className = 'match-list';
+                
+                results.forEach(result => {
+                    const card = document.createElement('div');
+                    card.className = 'nav-item level-2';
+                    card.style.cssText = `margin:10px;padding:15px;background:rgba(95,158,160,0.1);border-radius:8px;`;
+
+                    card.innerHTML = `
+                        <div style="width:100%">
+                            <div style="display:flex;justify-content:space-between">
+                                <span style="color:#2F4F4F">${result.matchName}-${result.property}</span>
+                                <span style="font-size:12px;color:#666">
+                                    ${result.year}｜${result.category}
+                                </span>
+                            </div>
+                            <div style="margin-top:10px;color:#5F9EA0">
+                                🏅 ${result.medals.join('、')}
+                            </div>
+                        </div>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        currentPath = [
+                            '当前页:首页',
+                            result.category,
+                            result.year,
+                            result.matchName,
+                            result.property
+                        ];
+                        syncMenuState(4);
+                        updateBreadcrumb();
+                        loadContentByPath();
+                    });
+
+                    container.appendChild(card);
+                });
+                contentDiv.appendChild(container);
+                return;
+            }
+
+            contentDiv.appendChild(container);
+        }
+
+        function groupByMatch(results) {
+            const groups = [];
+            
+            results.forEach(result => {
+                // 查找是否已有该比赛的组
+                let group = groups.find(g => 
+                    g.matchName === result.matchName &&
+                    g.category === result.category &&
+                    g.year === result.year
+                );
+                
+                if (!group) {
+                    group = {
+                        matchName: result.matchName,
+                        category: result.category,
+                        year: result.year,
+                        properties: {}
+                    };
+                    groups.push(group);
+                }
+                
+                // 按项目分组
+                if (!group.properties[result.property]) {
+                    group.properties[result.property] = [];
+                }
+                
+                group.properties[result.property].push({
+                    opponent: result.opponent,
+                    score: result.score,
+                    result: result.result
+                });
+            });
+            
+            return groups;
+        }
+
+
+        function submitMessage() {
+            const input = document.getElementById('messageInput');
+            if (!input.value.trim()) return;
+
+            // 创建留言元素
+            const message = document.createElement('div');
+            message.className = 'message-bubble';
+            message.textContent = input.value;
+
+            // 随机样式
+            message.style.left = Math.random() * 80 + '%';
+            message.style.top = Math.random() * 80 + '%';
+            message.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            message.style.color = `hsl(${Math.random() * 360}, 70%, 40%)`;
+            message.style.transform = `rotate(${Math.random() * 10 - 5}deg)`;
+
+            // 立体效果
+            message.style.textShadow = `1px 1px 2px rgba(0,0,0,0.2),
+                                      -1px -1px 2px rgba(255,255,255,0.5)`;
+
+            // 添加删除功能
+            message.onclick = () => message.remove();
+
+            document.querySelector('.content').appendChild(message);
+            input.value = '';
+        }
+
+        // window.addEventListener('DOMContentLoaded', initMenu);
+        window.addEventListener('DOMContentLoaded', () => {
+        // 先初始化数据再绑定其他事件
+                initMenu().then(() => {
+                    // 绑定搜索相关事件
+                    const searchBtn = document.querySelector('.search-btn');
+                    searchBtn.addEventListener('click', performSearch);
+                    
+                    const searchInput = document.querySelector('.search-input');
+                    searchInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') performSearch();
+                    });
+        
+                    // 绑定留言板事件
+                    document.getElementById('submitBtn').onclick = submitMessage;
+                    document.getElementById('messageInput').onkeydown = function(e) {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            submitMessage();
+                        }
+                    };
+                });
+            });
+
+
+
+    </script>
+
+</head>
+    
+<body>
+    <header class="header">
+
+        <h3 class="title">🏓林昀儒比赛记录汇总🏓</h3>
+
+
+        <div class="search-container">
+
+            <select id="searchType" class="search-filter">
+                <option value="event">按赛事</option>
+                <option value="player">按选手</option>
+                <option value="medal">按奖牌</option>
+                <option value="year">按年份</option>
+            </select>
+            <input type="text" class="search-input" placeholder="请输入搜索内容...">
+            <button class="search-btn">
+                <div class="pingpong-icon">🏓</div>
+            </button>
+            <div class="search-alert"></div>
+        </div>
+    </header>
+    <div class="content-area">
+        <!-- 这里可以添加具体内容 -->
+        <div class="banner">
+            <span><b>当前页:</b></span>
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="history.back()">◀</button>
+                <button class="nav-button" onclick="history.forward()">▶</button>
+            </div>
+        </div>
+        <div class="content">
+            <!-- <h1>欢迎使用娜个男人系统v1</h1>
+            <p><b>① 可在左侧的功能栏里查看赛事记录</b></p>
+            <p><b>② 任何bug可在微博中联系我或在下方留言</b></p>
+            <div class="message-board">
+                <textarea id="messageInput" placeholder="留下你的建议或祝福..."></textarea>
+                <button id="submitBtn" onclick="submitMessage()">发送留言 ✈️</button>
+            </div> -->
+        </div>
+    </div>
+    <!-- 导航栏容器 -->
+    <nav class="sidebar">
+        <!-- 上部区块 -->
+        <div class="menu-item top-item">
+            <div onclick="showAlert()">生涯成就</div>
+            <div onclick="showAlert()">技术分析</div>
+            <div onclick="showAlert()">关于选手</div>
+            <div onclick="showAlert()">语言设置</div>
+        </div>
+
+        <!-- 下部区块 -->
+        <div class="menu-item bottom-item" id="navTreeContainer">
+            <!-- <div>设置项1</div>
+            <div>设置项2</div> -->
+        </div>
+    </nav>
+</body>
+</html>
