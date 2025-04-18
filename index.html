@@ -1748,8 +1748,41 @@
             } else if (searchType === 'medal') {
                 const results = searchByMedal(keyword);
                 displaySearchResults(results, 'medal');
+            } else if (searchType === 'year') {
+                const results = searchByYear(keyword);
+                displaySearchResults(results, 'year');
             }
             updateBreadcrumb();
+        }
+
+        function searchByYear(keyword) {
+            const results = [];
+            Object.entries(data).forEach(([category, years]) => {
+                if (years.hasOwnProperty(keyword)) {
+                    years[keyword].forEach(match => {
+                        const matchName = Object.keys(match.比赛名称)[0];
+                        const properties = match.比赛名称[matchName].性质;
+                        const propertyCount = properties.length;
+
+                        // 去重判断
+                        const existing = results.find(r => 
+                            r.matchName === matchName && 
+                            r.category === category &&
+                            r.year === keyword
+                        );
+
+                        if (!existing) {
+                            results.push({
+                                category,
+                                year: keyword,
+                                matchName,
+                                propertyCount
+                            });
+                        }
+                    });
+                }
+            });
+            return results;
         }
 
         function searchByMedal(keyword) {
@@ -2029,6 +2062,54 @@
 
                     container.appendChild(card);
                 });
+                contentDiv.appendChild(container);
+                return;
+            } else if (searchType === 'year') {
+                const container = document.createElement('div');
+                container.className = 'match-list';
+                container.style.padding = '20px';
+
+                results.forEach(result => {
+                    const card = document.createElement('div');
+                    card.className = 'nav-item level-2';
+                    card.style.cssText = `
+                        margin: 10px;
+                        padding: 15px;
+                        background: rgba(95,158,160,0.1);
+                        border-radius: 8px;
+                        cursor: pointer;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    `;
+
+                    card.innerHTML = `
+                        <div>
+                            <span style="color:#2F4F4F">${result.matchName}</span>
+                            <div style="font-size:12px;color:#666;margin-top:5px">
+                                ${result.year} | ${result.category}
+                            </div>
+                        </div>
+                        <span style="font-size:14px;color:#5F9EA0">
+                            包含 ${result.propertyCount} 个项目
+                        </span>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        currentPath = [
+                            '当前页:首页',
+                            result.category,
+                            result.year,
+                            result.matchName
+                        ];
+                        syncMenuState(3);
+                        updateBreadcrumb();
+                        loadMatchContent(result.category, result.year, result.matchName);
+                    });
+
+                    container.appendChild(card);
+                });
+
                 contentDiv.appendChild(container);
                 return;
             }
