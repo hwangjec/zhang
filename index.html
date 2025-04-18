@@ -448,6 +448,71 @@
             color: #5F9EA0;
             margin-right: 8px;
         }
+        .nav-item.level-4 {
+            color: #2F4F4F !important;
+            background: rgba(255,255,255,0.9) !important;
+            border: 2px solid #5F9EA0 !important;
+            border-radius: 12px !important;
+            padding: 18px !important;
+            margin: 12px 0 !important;
+            box-shadow: 
+                0 3px 6px rgba(95,158,160,0.15),
+                inset 0 -2px 0 rgba(95,158,160,0.1);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 80px;
+        }
+
+        /* 悬停效果 */
+        .nav-item.level-4:hover {
+            transform: translateX(8px) scale(1.02);
+            background: linear-gradient(145deg, #f0ffff, #d0f0f0) !important;
+            box-shadow: 
+                0 5px 15px rgba(95,158,160,0.25),
+                inset 0 -3px 0 rgba(95,158,160,0.15);
+        }
+
+        /* 文字样式 */
+        .nav-item.level-4 span {
+            font-size: 17px !important;
+            font-weight: 500 !important;
+            letter-spacing: 1px;
+            position: relative;
+            padding-left: 28px;
+        }
+
+        /* 添加装饰性元素 */
+        .nav-item.level-4 span::before {
+            content: "⚡";
+            position: absolute;
+            left: 0;
+            top: -2px;
+            font-size: 20px;
+            color: #5F9EA0;
+            animation: spark 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spark {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        /* 右侧数据样式 */
+        .nav-item.level-4::after {
+            content: "";
+            display: block;
+            width: 24px;
+            height: 24px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%235F9EA0" d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>');
+            opacity: 0.8;
+            transition: transform 0.3s;
+        }
+
+        .nav-item.level-4:hover::after {
+            transform: translateX(3px);
+        }
 
         .match-card {
             background: white;
@@ -1405,7 +1470,7 @@
 
                     // 创建项目卡片
                     const card = document.createElement('div');
-                    card.className = 'nav-item level-2';
+                    card.className = 'nav-item level-4';
                     card.style.cssText = `
                         margin: 10px;
                         padding: 15px;
@@ -1423,18 +1488,18 @@
                     // 左侧信息
                     const leftSection = document.createElement('div');
                     leftSection.innerHTML = `
-                        <span style="font-size:16px;color:#2F4F4F">
-                            ${propName.toUpperCase()}
+                        <span>
+                            ${propName.toUpperCase()}-${winCount}胜${loseCount}负
                         </span>
                     `;
 
                     // 右侧统计
-                    const rightSection = document.createElement('div');
-                    rightSection.innerHTML = `
-                        <span style="font-size:14px;color:#5F9EA0">
-                            ${winCount}胜${loseCount}负
-                        </span>
-                    `;
+                    // const rightSection = document.createElement('div');
+                    // rightSection.innerHTML = `
+                    //     <span style="font-size:14px;color:#5F9EA0">
+                    //         ${winCount}胜${loseCount}负
+                    //     </span>
+                    // `;
 
                     // 点击查看详情
                     card.addEventListener('click', () => {
@@ -1452,7 +1517,7 @@
                     });
 
                     card.appendChild(leftSection);
-                    card.appendChild(rightSection);
+                    // card.appendChild(rightSection);
                     container.appendChild(card);
                 });
             });
