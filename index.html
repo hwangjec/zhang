@@ -969,6 +969,193 @@
             });
         }
 
+        function loadCareerAchievements() {
+            const contentDiv = document.querySelector('.content');
+            const bannerSpan = document.querySelector('.banner span');
+            bannerSpan.innerHTML = '<b>当前页:</b> <b>生涯成就</b>';
+            
+            // 奖牌数据收集
+            const medalData = {
+                '🏆 冠军': new Map(),
+                '🥈 亚军': new Map(),
+                '🥉 季军': new Map()
+            };
+
+            // 遍历数据结构
+            Object.entries(data).forEach(([category, years]) => {
+                Object.entries(years).forEach(([year, matches]) => {
+                    matches.forEach(match => {
+                        const matchName = Object.keys(match.比赛名称)[0];
+                        const matchKey = `${category}|${year}|${matchName}`;
+                        
+                        match.比赛名称[matchName].性质?.forEach(propertyObj => {
+                            Object.entries(propertyObj).forEach(([property, records]) => {
+                                records.forEach(record => {
+                                    const title = record.头衔?.trim();
+                                    if (!title) return;
+                                    
+                                    const medalType = title.match(/冠军/) ? '🏆 冠军' :
+                                                    title.match(/亚军/) ? '🥈 亚军' :
+                                                    title.match(/(季军|铜牌)/) ? '🥉 季军' : null;
+                                    
+                                    if (medalType) {
+                                        const uniqueKey = `${matchKey}|${property}`;
+                                        if (!medalData[medalType].has(uniqueKey)) {
+                                            medalData[medalType].set(uniqueKey, {
+                                                category,
+                                                year,
+                                                matchName,
+                                                property,
+                                                title,
+                                                date: match.时间 || '未知日期'
+                                            });
+                                        }
+                                    }
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+
+            // 创建UI
+            contentDiv.innerHTML = `
+                <div class="medal-grid" style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                    gap: 30px;
+                    padding: 20px;
+                ">
+                    ${Object.entries(medalData).map(([type, entries]) => `
+                        <div class="medal-card" style="
+                            background: linear-gradient(145deg, ${getCardColor(type)});
+                            border-radius: 16px;
+                            padding: 24px;
+                            box-shadow: 0 8px 32px rgba(95,158,160,0.15);
+                            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                            min-height: 400px;
+                        ">
+                            <div class="medal-header" style="
+                                display: flex;
+                                align-items: center;
+                                gap: 15px;
+                                margin-bottom: 20px;
+                            ">
+                                <div class="medal-icon" style="
+                                    font-size: 2.2em;
+                                    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+                                ">${type.split(' ')[0]}</div>
+                                <div>
+                                    <h3 style="
+                                        color: #2F4F4F;
+                                        margin: 0;
+                                        font-size: 1.8em;
+                                        text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                                    ">${type}</h3>
+                                    <p style="
+                                        color: #5F9EA0;
+                                        margin: 5px 0 0;
+                                        font-size: 1.2em;
+                                    ">${entries.size} 次荣誉</p>
+                                </div>
+                            </div>
+                            
+                            <div class="match-list" style="
+                                background: rgba(255,255,255,0.9);
+                                border-radius: 12px;
+                                padding: 15px;
+                                height: 300px;
+                                overflow-y: auto;
+                            ">
+                                ${Array.from(entries.values()).map(entry => `
+                                    <div class="match-item" 
+                                         style="
+                                            padding: 12px;
+                                            margin: 8px 0;
+                                            border-radius: 8px;
+                                            background: white;
+                                            box-shadow: 0 2px 8px rgba(95,158,160,0.1);
+                                            transition: all 0.3s;
+                                            cursor: pointer;
+                                         "
+                                         onclick="navigateToMatch('${entry.category}', '${entry.year}', '${entry.matchName}', '${entry.property}')">
+                                        <div style="
+                                            display: flex;
+                                            justify-content: space-between;
+                                            align-items: center;
+                                        ">
+                                            <div>
+                                                <div style="
+                                                    color: #2F4F4F;
+                                                    font-weight: 500;
+                                                    font-size: 1.1em;
+                                                ">${entry.matchName}</div>
+                                                <div style="
+                                                    color: #888;
+                                                    font-size: 0.9em;
+                                                    margin-top: 6px;
+                                                ">
+                                                    <span>${entry.year}</span> • 
+                                                    <span>${entry.category}</span> • 
+                                                    <span>${entry.property.toUpperCase()}</span>
+                                                </div>
+                                            </div>
+                                            <div style="
+                                                background: rgba(95,158,160,0.1);
+                                                padding: 4px 10px;
+                                                border-radius: 20px;
+                                                font-size: 0.9em;
+                                                color: #5F9EA0;
+                                            ">
+                                                ${entry.date}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                    `).join('')}
+
+                </div>
+            `;
+
+            // 添加悬停效果
+            document.querySelectorAll('.medal-card').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-5px) scale(1.02)';
+                    card.style.boxShadow = '0 12px 40px rgba(95,158,160,0.2)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'none';
+                    card.style.boxShadow = '0 8px 32px rgba(95,158,160,0.15)';
+                });
+            });
+        }
+
+        function getCardColor(type) {
+            const colors = {
+                '🏆 冠军': ['#fff3e0', '#ffe0b2'],
+                '🥈 亚军': ['#e8f5e9', '#c8e6c9'],
+                '🥉 季军': ['#fbe9e7', '#ffccbc']
+            };
+            return colors[type].join(', ');
+        }
+
+        function navigateToMatch(category, year, matchName, property) {
+            currentPath = [
+                '当前页:首页',
+                category,
+                year,
+                matchName,
+                property
+            ];
+            syncMenuState(4);
+            updateBreadcrumb();
+            loadContentByPath();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function updateBreadcrumb() {
             const bannerSpan = document.querySelector('.banner span');
             if (currentSearchKeyword) {
@@ -1604,7 +1791,6 @@
                         matchData.性质?.forEach(propertyObj => {
                             Object.entries(propertyObj).forEach(([propName, records]) => {
                                 const medalRecords = records.filter(record => {
-                                    // 安全访问头衔字段
                                     const title = record.头衔?.trim() || '';
                                     return searchTerms.some(term => 
                                         title.includes(term)
@@ -1612,19 +1798,29 @@
                                 });
                                 
                                 if (medalRecords.length > 0) {
-                                    // 去重处理
+                                    // 修改去重逻辑：增加category/year/propName作为判断条件
                                     const existing = results.find(r => 
-                                        r.matchName === matchName && 
-                                        r.property === propName
+                                        r.matchName === matchName &&
+                                        r.property === propName && 
+                                        r.category === category &&  // 新增类别判断
+                                        r.year === year              // 新增年份判断
                                     );
+                                    
                                     if (!existing) {
                                         results.push({
                                             category,
                                             year,
                                             matchName,
                                             property: propName,
+                                            // 合并同一性质下的多个奖牌
                                             medals: [...new Set(medalRecords.map(r => r.头衔))]
                                         });
+                                    } else {
+                                        // 合并同一性质下的不同奖牌（如单场赛事同一性质多个奖牌）
+                                        existing.medals = [
+                                            ...new Set([...existing.medals, 
+                                            ...medalRecords.map(r => r.头衔)])
+                                        ];
                                     }
                                 }
                             });
@@ -1976,7 +2172,7 @@
     <nav class="sidebar">
         <!-- 上部区块 -->
         <div class="menu-item top-item">
-            <div onclick="showAlert()">生涯成就</div>
+            <div onclick="loadCareerAchievements()">生涯成就</div>
             <div onclick="showAlert()">技术分析</div>
             <div onclick="showAlert()">关于选手</div>
             <div onclick="showAlert()">语言设置</div>
