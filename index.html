@@ -707,44 +707,85 @@
         }
 
         .search-container {
-    position: relative; /* 为提示框定位提供基准 */
-}
+            position: relative; /* 为提示框定位提供基准 */
+        }
+        
+        .search-alert {
+            position: absolute;
+            bottom: -40px;
+            left: 120px; /* 对齐搜索输入框 */
+            background: #fff;
+            color: #CD5C5C;
+            font-size: 14px;
+            padding: 8px 15px;
+            border-radius: 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            border: 1px solid #ffcccc;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none; /* 防止干扰点击操作 */
+            z-index: 999;
+        }
+        
+        .search-alert::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 20px;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-left: 1px solid #ffcccc;
+            border-top: 1px solid #ffcccc;
+            transform: rotate(45deg);
+        }
+        
+        .search-alert.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-.search-alert {
-    position: absolute;
-    bottom: -40px;
-    left: 120px; /* 对齐搜索输入框 */
-    background: #fff;
-    color: #CD5C5C;
-    font-size: 14px;
-    padding: 8px 15px;
-    border-radius: 4px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    border: 1px solid #ffcccc;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none; /* 防止干扰点击操作 */
-    z-index: 999;
-}
+        .honor-scroll{
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .honor-scroll:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(95,158,160,0.2);
+        }
 
-.search-alert::before {
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: 20px;
-    width: 12px;
-    height: 12px;
-    background: #fff;
-    border-left: 1px solid #ffcccc;
-    border-top: 1px solid #ffcccc;
-    transform: rotate(45deg);
-}
+        .honor-scroll-container {
+            height: 320px;
+            overflow: hidden;
+            position: relative;
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            padding: 15px 15px 40px;
+        }
 
-.search-alert.show {
-    opacity: 1;
-    transform: translateY(0);
-}
+        .honor-scroll-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(transparent, white 90%);
+            z-index: 1;
+        }
+
+        .honor-item {
+            padding: 12px;
+            margin: 10px 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(95,158,160,0.1);
+            animation: scroll 15s linear infinite;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
 
     </style>
@@ -1085,6 +1126,40 @@
                 });
             });
 
+            const honorSet = new Set();
+            const honorData = [];
+
+            Object.entries(data).forEach(([category, years]) => {
+                Object.entries(years).forEach(([year, matches]) => {
+                    matches.forEach(match => {
+                        const matchName = Object.keys(match.比赛名称)[0];
+                        const matchTime = match.时间 || '未知时间'; // 添加时间字段
+                        match.比赛名称[matchName].性质?.forEach(propertyObj => {
+                            Object.entries(propertyObj).forEach(([property, records]) => {
+                                records.forEach(record => {
+                                    if (record.头衔?.match(/冠军|亚军|季军|铜牌/)) {
+                                        // 唯一键包含：类别、年份、比赛名称、性质、轮次、时间
+                                        const uniqueKey = `${category}|${year}|${matchName}|${property}`;
+                                        if (!honorSet.has(uniqueKey)) {
+                                            honorSet.add(uniqueKey);
+                                            honorData.push({
+                                                category,
+                                                year,
+                                                matchName,
+                                                property,
+                                                title: record.头衔,
+                                                date: matchTime,
+                                                round: record.轮次 // 添加轮次字段
+                                            });
+                                        }
+                                    }
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+
             // 创建UI
             contentDiv.innerHTML = `
                 <div class="medal-grid" style="
@@ -1093,6 +1168,32 @@
                     gap: 30px;
                     padding: 20px;
                 ">
+                    <div class="medal-card honor-scroll" style="
+                        background: linear-gradient(145deg, #f0f8ff, #d1e0ff); 
+                        min-height: 420px;
+                    ">
+                        <div class="medal-header" style="margin-bottom:15px">
+                            <div class="medal-icon" style="font-size:2em">🏅  <b>荣誉时刻</b></div>
+                            
+                        </div>
+                        <div class="honor-scroll-container">
+                            ${honorData.map(entry => `
+                            <div class="honor-item" 
+                                 onclick="navigateToMatch('${entry.category}', '${entry.year}', 
+                                          '${entry.matchName.replace(/'/g, "\\'")}', 
+                                          '${entry.property}')">
+                                <span class="honor-time">${entry.date}</span>
+                                <span class="honor-title">
+                                    ${entry.matchName} - ${entry.property.toUpperCase()}
+                                </span>
+                                <span class="honor-medal ${entry.title.includes('冠军') ? 'gold' : 
+                                    entry.title.includes('亚军') ? 'silver' : 'bronze'}">
+                                    ${entry.title}
+                                </span>
+                            </div>
+                        `).join('')}
+                        </div>
+                    </div>
                     ${Object.entries(medalData).map(([type, entries]) => `
                         <div class="medal-card" style="
                             background: linear-gradient(145deg, ${getCardColor(type)});
@@ -1198,6 +1299,19 @@
                     card.style.boxShadow = '0 8px 32px rgba(95,158,160,0.15)';
                 });
             });
+            const honorContainer = document.querySelector('.honor-scroll-container');
+            const items = honorContainer.querySelectorAll('.honor-item');
+            const totalHeight = items.length * 110; // 80px高度 + 30px间距
+
+            // 动态更新动画终点
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes scroll {
+                    0% { transform: translateY(0); }
+                    100% { transform: translateY(-${totalHeight}px); }
+                }
+            `;
+            document.head.appendChild(style);
         }
 
         function getCardColor(type) {
