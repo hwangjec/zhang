@@ -781,10 +781,30 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 6px rgba(95,158,160,0.1);
-            animation: scroll 90s linear infinite;
+            animation: scroll 120s linear infinite;
             display: flex;
             align-items: center;
             gap: 15px;
+        }
+
+        .honor-time {
+            color: #5F9EA0;
+            font-size: 0.9em;
+            min-width: 80px;
+        }
+
+        .honor-title {
+            color: #2F4F4F;
+            flex: 1;
+        }
+
+        .honor-medal {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            &.gold { background: #FFD700; color: #856404; }
+            &.silver { background: #C0C0C0; color: #515151; }
+            &.bronze { background: #CD7F32; color: #fff; }
         }
 
 
