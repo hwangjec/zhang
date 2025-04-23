@@ -1409,6 +1409,8 @@
 
         function loadTechnicalAnalysis() {
             const contentDiv = document.querySelector('.content');
+            const bannerSpan = document.querySelector('.banner span');
+            bannerSpan.innerHTML = '<b>当前页:</b> <b>技术分析</b>';
             contentDiv.innerHTML = `
                 <div class="analysis-container">
                     <div class="radar-container">
