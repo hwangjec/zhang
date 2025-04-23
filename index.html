@@ -807,6 +807,66 @@
             &.bronze { background: #CD7F32; color: #fff; }
         }
 
+        .nav-button:disabled {
+            background: #c0c0c0 !important;
+            cursor: not-allowed !important;
+            opacity: 0.5;
+            box-shadow: none !important;
+        }
+        
+        .nav-button:disabled:hover {
+            transform: none !important;
+        }
+
+        .radar-container {
+            float: left;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            opacity: 0;
+            transform: scale(0.8);
+            animation: radarEntrance 1s ease-out forwards;
+        }
+
+        @keyframes radarEntrance {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .radar-chart {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .analysis-text {
+            margin-left: 350px; /* 给雷达图留出空间 */
+            width: calc(100% - 400px);
+            float: right;
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 4px 12px rgba(95,158,160,0.15);
+            color: #2F4F4F;
+            line-height: 1.6;
+        }
+
+        .section-title {
+            color: #5F9EA0;
+            font-size: 1.2em;
+            margin: 15px 0 10px;
+            border-left: 4px solid #5F9EA0;
+            padding-left: 10px;
+        }
+
+        .highlight {
+            color: #4D7E80;
+            font-weight: 500;
+        }
+
 
     </style>
 
@@ -816,6 +876,10 @@
         let data = null;
         let originalContent = null;
         let currentSearchKeyword = null;
+
+        let historyStack = [];
+        let currentIndex = -1;
+        const MAX_HISTORY = 50;
 
 
         
@@ -1343,6 +1407,144 @@
             return colors[type].join(', ');
         }
 
+        function loadTechnicalAnalysis() {
+            const contentDiv = document.querySelector('.content');
+            contentDiv.innerHTML = `
+                <div class="analysis-container">
+                    <div class="radar-container">
+                        <canvas class="radar-chart" id="radarChart"></canvas>
+                    </div>
+                    <div class="analysis-text">
+                        ${getAnalysisText()}
+                    </div>
+                </div>
+            `;
+            drawRadarChart();
+        }
+        
+        function getAnalysisText() {
+            return `
+                <div class="section-title">1. 技术体系：正反手暴力“速度流”​</div>
+                <div class="highlight">反手体系</div>
+                <p>弹击式快拨​​：反手近台弹击以速度压制为主，力量大但旋转较弱，依赖落点变化。</p>
+                <p>反手快撕​​：相持中反手连续快撕线路长，常压对手底线，但弧线控制略粗糙。</p>
+                
+        
+                <div class="highlight">正手技术</div>
+                <p>近台快攻​​：正手快带、快撕速度极快，击球点早，依靠爆发力压制对手。</p>
+                <p>侧身暴冲​​：侧身正手发力充分，弧线低平，杀伤力强于林昀儒，但稳定性稍差。</p>
+                
+        
+                <div class="section-title">2. 战术倾向：以速度和正手突破为核心​</div>
+                <p>发抢战术​​：发球以逆旋转短球配合急长球，接发球直接拧拉或快劈长，强行进入上旋对抗。</p>
+                <p>​​相持策略​​：近台快速压制对手反手，伺机侧身正手爆冲直线或斜线，追求“一击必杀”。</p>
+                <p>弱点：反手位防守稳定性不足，对手加转弧圈时易失误；中远台对拉时步伐调整较慢。</p>
+        
+                <div class="section-title">3. 心理素质与比赛风格</div>
+                <p>​​激情型选手​​：依靠高声呐喊提升气势，但情绪波动可能影响逆风局稳定性（如2023年德班世乒赛对梁靖崑的决胜局崩盘）。</p>
+                <p>搏杀倾向​​：关键分敢于使用高风险技术（如正手全台抢冲），但失误率较高。</p>
+            `;
+        }
+        
+        function drawRadarChart() {
+            const canvas = document.getElementById('radarChart');
+            const ctx = canvas.getContext('2d');
+            const size = 300;
+            const center = size/2;
+            const radius = size * 0.4;
+            const dimensions = {
+                '力量': 9.0,
+                '速度': 9.5,
+                '技术': 8.0,
+                '发球': 7.5,
+                '防守': 6.5,
+                '经验': 8.5
+            };
+            
+            canvas.width = size;
+            canvas.height = size;
+        
+            // 绘制网格
+            ctx.strokeStyle = '#5F9EA055';
+            ctx.setLineDash([5, 3]);
+            for(let i = 1; i <= 5; i++) {
+                ctx.beginPath();
+                for(let j = 0; j < 6; j++) {
+                    const angle = (Math.PI * 2 * j / 6) - Math.PI/2;
+                    const x = center + Math.cos(angle) * radius * i/5;
+                    const y = center + Math.sin(angle) * radius * i/5;
+                    ctx.lineTo(x, y);
+                }
+                ctx.closePath();
+                ctx.stroke();
+            }
+        
+            // 绘制数据多边形
+            ctx.beginPath();
+            ctx.setLineDash([]);
+            ctx.strokeStyle = '#5F9EA0';
+            ctx.fillStyle = '#5F9EA033';
+            ctx.lineWidth = 2;
+            
+            Object.keys(dimensions).forEach((key, i) => {
+                const value = dimensions[key];
+                const angle = (Math.PI * 2 * i / 6) - Math.PI/2;
+                const r = radius * (value/10);
+                const x = center + Math.cos(angle) * r;
+                const y = center + Math.sin(angle) * r;
+                
+                if(i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+                
+                // 绘制坐标轴
+                ctx.beginPath();
+                ctx.moveTo(center, center);
+                ctx.lineTo(center + Math.cos(angle)*radius, center + Math.sin(angle)*radius);
+                ctx.strokeStyle = '#5F9EA0';
+                ctx.stroke();
+                
+                // 绘制标签
+                ctx.fillStyle = '#2F4F4F';
+                ctx.font = '12px Arial';
+                const labelX = center + Math.cos(angle) * (radius + 20);
+                const labelY = center + Math.sin(angle) * (radius + 20);
+                ctx.textAlign = 'center';
+                ctx.fillText(key, labelX, labelY);
+            });
+            
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        
+            // 绘制数据点
+            ctx.fillStyle = '#5F9EA0';
+            Object.keys(dimensions).forEach((key, i) => {
+                const value = dimensions[key];
+                const angle = (Math.PI * 2 * i / 6) - Math.PI/2;
+                const r = radius * (value/10);
+                const x = center + Math.cos(angle) * r;
+                const y = center + Math.sin(angle) * r;
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI*2);
+                ctx.fill();
+            });
+            ctx.beginPath();
+            ctx.strokeStyle = '#5F9EA0';
+            ctx.lineWidth = 2;
+            Object.keys(dimensions).forEach((key, i) => {
+                const value = dimensions[key];
+                const angle = (Math.PI * 2 * i / 6) - Math.PI/2;
+                const r = radius * (value/10);
+                const x = center + Math.cos(angle) * r;
+                const y = center + Math.sin(angle) * r;
+                
+                if(i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+            ctx.stroke();
+        }
+
         function navigateToMatch(category, year, matchName, property) {
             currentPath = [
                 '当前页:首页',
@@ -1351,6 +1553,7 @@
                 matchName,
                 property
             ];
+            updateHistory(currentPath);
             syncMenuState(4);
             updateBreadcrumb();
             loadContentByPath();
@@ -1386,6 +1589,7 @@
             currentSearchKeyword = null;
             document.querySelector('.search-input').value = '';
             currentPath = ['当前页:首页']; // 强制重置路径
+            updateHistory(currentPath);
             syncMenuState(0);
             loadHomeContent();
             updateBreadcrumb();
@@ -1395,7 +1599,7 @@
             // 计算需要保留的层级（+1处理首页偏移）
             const targetLevel = clickIndex;
             currentPath = currentPath.slice(0, targetLevel + 1);
-
+            updateHistory(currentPath);
             // 同步左侧菜单状态
             syncMenuState(targetLevel);
             updateBreadcrumb();
@@ -1425,49 +1629,114 @@
 
             // 递归展开需要显示的层级
             const openTargetLevels = (container, currentLevel) => {
-        if (!container) return; // 新增空值检查
+                if (!container) return; // 新增空值检查
+                
+                Array.from(container.children).forEach(el => {
+                    if(el.classList.contains('nav-item')) {
+                        const childContainer = el.nextElementSibling;
+                        
+                        // 新增防御性编程
+                        if (!childContainer || !childContainer.classList) {
+                            // console.warn('无效的子容器:', el.textContent);
+                            return;
+                        }
         
-        Array.from(container.children).forEach(el => {
-            if(el.classList.contains('nav-item')) {
-                const childContainer = el.nextElementSibling;
-                
-                // 新增防御性编程
-                if (!childContainer || !childContainer.classList) {
-                    console.warn('无效的子容器:', el.textContent);
-                    return;
-                }
-
-                const itemText = el.textContent.replace('▶','').trim();
-                
-                if (currentLevel < targetLevel && 
-                   currentPath[currentLevel + 1] === itemText) {
-                    childContainer.classList.add('show');
-                    const arrow = el.querySelector('.nav-arrow');
-                    if (arrow) arrow.style.transform = 'rotate(90deg)';
-                    openTargetLevels(childContainer, currentLevel + 1);
-                }
-            }
-        });
-    };
+                        const itemText = el.textContent.replace('▶','').trim();
+                        
+                        if (currentLevel < targetLevel && 
+                           currentPath[currentLevel + 1] === itemText) {
+                            childContainer.classList.add('show');
+                            const arrow = el.querySelector('.nav-arrow');
+                            if (arrow) arrow.style.transform = 'rotate(90deg)';
+                            openTargetLevels(childContainer, currentLevel + 1);
+                        }
+                    }
+                });
+            };
             openTargetLevels(menuContainer, 0);
+        }
+
+        function updateHistory(newPath) {
+            // 移除当前索引之后的历史
+            historyStack = historyStack.slice(0, currentIndex + 1);
+            
+            // 限制历史记录长度
+            if (historyStack.length >= MAX_HISTORY) {
+                historyStack.shift();
+                currentIndex--;
+            }
+            
+            // 添加新记录并更新索引
+            historyStack.push(JSON.parse(JSON.stringify(newPath)));
+            currentIndex = historyStack.length - 1;
+            
+            updateNavButtons();
+        }
+        
+        function updateNavButtons() {
+            const [backBtn, forwardBtn] = document.querySelectorAll('.nav-button');
+            
+            backBtn.disabled = currentIndex <= 0;
+            forwardBtn.disabled = currentIndex >= historyStack.length - 1;
+            
+            // 添加样式变化
+            backBtn.style.opacity = backBtn.disabled ? 0.5 : 1;
+            forwardBtn.style.opacity = forwardBtn.disabled ? 0.5 : 1;
+            backBtn.style.cursor = backBtn.disabled ? 'not-allowed' : 'pointer';
+            forwardBtn.style.cursor = forwardBtn.disabled ? 'not-allowed' : 'pointer';
+        }
+        
+        function goBack() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                applyHistoryState();
+            }
+        }
+        
+        function goForward() {
+            if (currentIndex < historyStack.length - 1) {
+                currentIndex++;
+                applyHistoryState();
+            }
+        }
+        
+        function applyHistoryState() {
+            const state = historyStack[currentIndex];
+            currentPath = JSON.parse(JSON.stringify(state));
+            
+            // 同步菜单状态
+            const pathDepth = currentPath.length - 1; // 减去"当前页:"前缀
+            syncMenuState(pathDepth);
+            
+            // 加载内容
+            loadContentByPath();
+            
+            // 更新面包屑
+            updateBreadcrumb();
+            
+            // 更新按钮状态
+            updateNavButtons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
 
         function loadContentByPath() {
-    const contentDiv = document.querySelector('.content');
-    const validPath = currentPath.map(p => p.replace('当前页:', '')); // 直接处理前缀
-    const actualDepth = validPath.length;
-
-    contentDiv.innerHTML = '';
-    switch (actualDepth) {
-        case 1: loadHomeContent(); break;
-        case 2: loadCategoryContent(validPath[1]); break;
-        case 3: loadYearContent(validPath[1], validPath[2]); break;
-        case 4: loadMatchContent(validPath[1], validPath[2], validPath[3]); break;
-        case 5: loadMatchDetails(validPath[1], validPath[2], validPath[3], validPath[4]); break;
-        default: loadHomeContent();
-    }
-}
+            const contentDiv = document.querySelector('.content');
+            const validPath = currentPath.map(p => p.replace('当前页:', '')); // 直接处理前缀
+            const actualDepth = validPath.length;
+        
+            contentDiv.innerHTML = '';
+            switch (actualDepth) {
+                case 1: loadHomeContent(); break;
+                case 2: loadCategoryContent(validPath[1]); break;
+                case 3: loadYearContent(validPath[1], validPath[2]); break;
+                case 4: loadMatchContent(validPath[1], validPath[2], validPath[3]); break;
+                case 5: loadMatchDetails(validPath[1], validPath[2], validPath[3], validPath[4]); break;
+                default: loadHomeContent();
+            }
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            updateNavButtons(); 
+        }
 
         function loadHomeContent() {
             const contentDiv = document.querySelector('.content');
@@ -1829,6 +2098,7 @@
 
         function handlePathNavigation(...pathSegments) {
             currentPath = ['当前页:', ...pathSegments];
+            updateHistory(currentPath);
             syncMenuState(pathSegments.length);
             updateBreadcrumb();
             loadContentByPath();
@@ -1859,6 +2129,8 @@
                 const navContainer = document.getElementById('navTreeContainer');
                 createMenu(navContainer, data); // 创建菜单树
                 currentPath = ['当前页:首页'];
+                historyStack = [JSON.parse(JSON.stringify(currentPath))];
+                currentIndex = 0;
                 syncMenuState(0);
                 updateBreadcrumb();
                 loadHomeContent();
@@ -1879,18 +2151,18 @@
         //         submitMessage();
         //     }
         // });
-        document.addEventListener('DOMContentLoaded', function() {
-            // 4. 添加空值检查
-            const input = document.getElementById('messageInput');
-            if (!input) throw new Error("元素未找到");
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     // 4. 添加空值检查
+        //     const input = document.getElementById('messageInput');
+        //     if (!input) throw new Error("元素未找到");
 
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    submitMessage();
-                }
-            });
-        });
+        //     input.addEventListener('keydown', function(e) {
+        //         if (e.key === 'Enter' && !e.shiftKey) {
+        //             e.preventDefault();
+        //             submitMessage();
+        //         }
+        //     });
+        // });
 
 
         // 搜索功能实现
@@ -1951,6 +2223,7 @@
                 const results = searchByYear(keyword);
                 displaySearchResults(results, 'year');
             }
+            updateHistory(currentPath);
             updateBreadcrumb();
         }
 
@@ -2436,8 +2709,8 @@
         <div class="banner">
             <span><b>当前页:</b></span>
             <div class="nav-buttons">
-                <button class="nav-button" onclick="history.back()">◀</button>
-                <button class="nav-button" onclick="history.forward()">▶</button>
+                <button class="nav-button" onclick="goBack()">◀</button>
+                <button class="nav-button" onclick="goForward()">▶</button>
             </div>
         </div>
         <div class="content">
