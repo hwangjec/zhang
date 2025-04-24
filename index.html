@@ -1644,14 +1644,7 @@
                             ${generateTechFeatures()}
                         </div>
                     </div>
-        
-                    <!-- 重要成就 -->
-                    <div class="profile-card achievements">
-                        <h3>🏆 主要荣誉</h3>
-                        <div class="achievement-grid">
-                            ${generateAchievements()}
-                        </div>
-                    </div>
+                    
                 </div>
             `;
         }
@@ -1724,32 +1717,6 @@
             `;
         }
         
-        function generateAchievements() {
-            return `
-                <div class="achievement-item">
-                    <div class="medal">🏅</div>
-                    <div class="content">
-                        <h4>历史最年轻</h4>
-                        <p>国际乒联总决赛最年轻男单冠军（15岁）</p>
-                    </div>
-                </div>
-                <div class="achievement-item">
-                    <div class="medal">🥉</div>
-                    <div class="content">
-                        <h4>奥运突破</h4>
-                        <p>2020东京奥运会男团铜牌（击败德国队）</p>
-                    </div>
-                </div>
-                <div class="achievement-item">
-                    <div class="medal">📈</div>
-                    <div class="content">
-                        <h4>世界排名</h4>
-                        <p>2022年世界排名最高第4位（日本选手最高纪录）</p>
-                    </div>
-                </div>
-            `;
-        }
-
         function navigateToMatch(category, year, matchName, property) {
             currentPath = [
                 '当前页:首页',
