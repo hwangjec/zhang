@@ -2269,6 +2269,7 @@
             currentPath = ['当前页:首页', category, year, matchName, property];
             syncMenuState(4);
             updateBreadcrumb();
+            document.querySelector('.content').scrollTop = 0;
         }
 
         function handlePathNavigation(...pathSegments) {
