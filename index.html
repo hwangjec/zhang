@@ -867,6 +867,70 @@
             font-weight: 500;
         }
 
+        .info-grid .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(95,158,160,0.05);
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .info-item .icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .info-content .label {
+            color: #5F9EA0;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        .info-content .value {
+            color: #2F4F4F;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        /* 成就展示 */
+        .achievement-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(95,158,160,0.05);
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .achievement-item:hover {
+            transform: translateX(10px);
+        }
+
+        .achievement-item .medal {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .achievement-item h4 {
+            color: #5F9EA0;
+            margin: 0 0 5px 0;
+        }
+
+        .achievement-item p {
+            color: #2F4F4F;
+            margin: 0;
+            font-size: 0.9em;
+        }
+
 
     </style>
 
@@ -1545,6 +1609,145 @@
             });
             ctx.closePath();
             ctx.stroke();
+        }
+
+        function loadPlayerProfile() {
+            const contentDiv = document.querySelector('.content');
+            const bannerSpan = document.querySelector('.banner span');
+            bannerSpan.innerHTML = '<b>当前页:</b> <b>关于选手</b>';
+            
+            contentDiv.innerHTML = `
+                <div class="player-profile">
+                    <!-- 基本资料卡片 -->
+                    <div class="profile-card basic-info">
+                        <div class="card-header">
+                            <h2>张本智和 (Harimoto Tomokazu)</h2>
+                            <div class="national-flag">🇯🇵 日本</div>
+                        </div>
+                        <div class="info-grid">
+                            ${generateBasicInfoItems()}
+                        </div>
+                    </div>
+        
+                    <!-- 成长历程 -->
+                    <div class="profile-card timeline">
+                        <h3 onclick="loadCareerAchievements()">📈 职业生涯里程碑</h3>
+                        <div class="timeline-container">
+                            ${generateCareerTimeline()}
+                        </div>
+                    </div>
+        
+                    <!-- 技术特征 -->
+                    <div class="profile-card tech-stats">
+                        <h3 onclick="loadTechnicalAnalysis()">🎯 技术特征</h3>
+                        <div class="tech-grid">
+                            ${generateTechFeatures()}
+                        </div>
+                    </div>
+        
+                    <!-- 重要成就 -->
+                    <div class="profile-card achievements">
+                        <h3>🏆 主要荣誉</h3>
+                        <div class="achievement-grid">
+                            ${generateAchievements()}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function generateBasicInfoItems() {
+            const infoData = [
+                { icon: '🎂', label: '出生日期', value: '2003年6月27日' },
+                { icon: '📍', label: '出生地', value: '日本宫城县' },
+                { icon: '📏', label: '身高', value: '178cm' },
+                { icon: '🤚', label: '持拍方式', value: '右手横拍两面反胶' },
+                { icon: '👨👩👦', label: '家庭背景', value: '父亲张宇/母亲张凌（原四川省队选手）' },
+                { icon: '📜', label: '入籍时间', value: '2014年加入日本籍' }
+            ];
+        
+            return infoData.map(item => `
+                <div class="info-item">
+                    <span class="icon">${item.icon}</span>
+                    <div class="info-content">
+                        <div class="label">${item.label}</div>
+                        <div class="value">${item.value}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generateCareerTimeline() {
+            const timelineData = [
+                { year: '2005', event: '2岁开始持拍训练', icon: '🏓' },
+                { year: '2013', event: '10岁成为世青赛最年轻奖牌得主', icon: '🥉' },
+                { year: '2016', event: '13岁刷新最年轻世乒赛参赛纪录', icon: '🌍' },
+                { year: '2018', event: '15岁击败马龙、张继科夺总决赛冠军', icon: '🏆' },
+                { year: '2021', event: '东京奥运会男团铜牌', icon: '🇯🇵' },
+                { year: '2022', event: '成都世乒赛击败樊振东、王楚钦', icon: '🔥' }
+            ];
+        
+            return timelineData.map(item => `
+                <div class="timeline-item">
+                    <div class="timeline-marker">${item.icon}</div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">${item.year}</div>
+                        <div class="timeline-event">${item.event}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generateTechFeatures() {
+            return `
+                <div class="tech-item">
+                    <div class="tech-icon">💥</div>
+                    <div class="tech-content">
+                        <h4>暴力近台</h4>
+                        <p>近台快攻速度达4.5次/秒，正手爆冲球速超120km/h</p>
+                    </div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🎭</div>
+                    <div class="tech-content">
+                        <h4>心理特质</h4>
+                        <p>标志性赛场怒吼，关键分处理成功率68%（双刃剑效应）</p>
+                    </div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-icon">🔄</div>
+                    <div class="tech-content">
+                        <h4>技术体系</h4>
+                        <p>反手拧拉+正手快带组合使用率82%，台内控制得分率71%</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function generateAchievements() {
+            return `
+                <div class="achievement-item">
+                    <div class="medal">🏅</div>
+                    <div class="content">
+                        <h4>历史最年轻</h4>
+                        <p>国际乒联总决赛最年轻男单冠军（15岁）</p>
+                    </div>
+                </div>
+                <div class="achievement-item">
+                    <div class="medal">🥉</div>
+                    <div class="content">
+                        <h4>奥运突破</h4>
+                        <p>2020东京奥运会男团铜牌（击败德国队）</p>
+                    </div>
+                </div>
+                <div class="achievement-item">
+                    <div class="medal">📈</div>
+                    <div class="content">
+                        <h4>世界排名</h4>
+                        <p>2022年世界排名最高第4位（日本选手最高纪录）</p>
+                    </div>
+                </div>
+            `;
         }
 
         function navigateToMatch(category, year, matchName, property) {
@@ -2731,7 +2934,7 @@
         <div class="menu-item top-item">
             <div onclick="loadCareerAchievements()">生涯成就</div>
             <div onclick="loadTechnicalAnalysis()">技术分析</div>
-            <div onclick="showAlert()">关于选手</div>
+            <div onclick="loadPlayerProfile()">关于选手</div>
             <div onclick="showAlert()">语言设置</div>
         </div>
 
