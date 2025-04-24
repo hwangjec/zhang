@@ -931,6 +931,179 @@
             font-size: 0.9em;
         }
 
+        @media (max-width: 1200px) {
+          .sidebar {
+            width: 280px;
+            margin: 0 10px;
+          }
+        
+          .header,
+          .content-area {
+            left: 300px; /* 导航栏宽度 + 边距 */
+          }
+        
+          .search-container {
+            width: 70%;
+          }
+        }
+        
+        /* 小屏幕适配（大屏手机） */
+        @media (max-width: 992px) {
+          .sidebar {
+            width: 240px;
+            padding: 10px;
+          }
+        
+          .header {
+            left: 260px;
+            height: 120px;
+            top: 10px;
+            right: 10px;
+          }
+        
+          .content-area {
+            left: 260px;
+            top: 140px;
+            right: 10px;
+            bottom: 10px;
+          }
+        
+          .title {
+            font-size: 24px;
+            margin-bottom: 10px;
+          }
+        
+          .search-container {
+            width: 80%;
+          }
+        
+          .search-input,
+          .search-filter {
+            font-size: 14px;
+          }
+        
+          .menu-item div {
+            font-size: 16px;
+            padding: 10px 15px;
+          }
+        }
+        
+        /* 移动端适配（手机） */
+        @media (max-width: 768px) {
+          /* 改为垂直布局 */
+          .sidebar {
+            position: relative;
+            width: 100%;
+            height: auto;
+            left: 0;
+            top: 0;
+            margin: 10px;
+          }
+        
+          .header {
+            position: relative;
+            left: 0;
+            right: 0;
+            top: 0;
+            margin: 10px;
+            height: auto;
+            padding: 15px;
+          }
+        
+          .content-area {
+            position: relative;
+            left: 0;
+            right: 0;
+            top: 0;
+            margin: 10px;
+          }
+        
+          /* 搜索框改为垂直布局 */
+          .search-container {
+            flex-direction: column;
+            width: 100%;
+            gap: 8px;
+          }
+        
+          .search-filter,
+          .search-input {
+            width: 100%;
+            border-radius: 20px !important;
+            margin-left: 0;
+          }
+        
+          /* 隐藏导航按钮 */
+          .nav-buttons {
+            display: none;
+          }
+        
+          /* 内容卡片调整 */
+          .match-card {
+            width: 100%;
+            margin: 10px 0;
+          }
+        
+          /* 技术分析改为垂直布局 */
+          .analysis-container {
+            flex-direction: column;
+          }
+        
+          .radar-container {
+            margin: 0 auto;
+          }
+        
+          .analysis-text {
+            width: 100%;
+            margin-left: 0;
+          }
+        
+          /* 生涯成就网格调整 */
+          .medal-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+        
+        /* 小尺寸手机适配 */
+        @media (max-width: 480px) {
+          .content {
+            margin-left: 5px !important;
+            margin-right: 5px !important;
+          }
+        
+          .match-details {
+            grid-template-columns: 1fr;
+          }
+        
+          .banner span {
+            font-size: 16px;
+          }
+        
+          .menu-item div {
+            font-size: 14px;
+            padding: 8px 12px;
+          }
+        
+          .nav-item.level-4 span {
+            font-size: 14px !important;
+          }
+        
+          .search-btn {
+            width: 100%;
+          }
+        }
+        
+        /* 横屏手机适配 */
+        @media (max-height: 500px) and (orientation: landscape) {
+          .sidebar {
+            height: 90vh;
+            overflow-y: auto;
+          }
+        
+          .content-area {
+            height: 80vh;
+          }
+        }
+
 
     </style>
 
